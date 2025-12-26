@@ -3,7 +3,8 @@ import React
 import AdServices
 import NitroModules
 
-class HybridNitroAppleAdAttribution: HybridNitroAppleAdAttributionSpec {
+@objc(HybridNitroAppleAdAttribution)
+class HybridNitroAppleAdAttribution: NSObject, HybridNitroAppleAdAttributionSpec {
     // MARK: - Constants
     static let errorDomain = "RNAAAErrorDomain"
     static let maxRetries = 3
