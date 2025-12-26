@@ -3,7 +3,7 @@ import React
 import AdServices
 import NitroModules
 
-class HybridNitroAppleAds: HybridNitroAppleAdsSpec {
+class HybridNitroAppleAdAttribution: HybridNitroAppleAdAttributionSpec {
     // MARK: - Constants
     static let errorDomain = "RNAAAErrorDomain"
     static let maxRetries = 3
@@ -74,6 +74,51 @@ class HybridNitroAppleAds: HybridNitroAppleAdsSpec {
         }
 
         return (nil, createError(description: "Unexpected error in token generation"))
+    }
+
+    static func parseAppleAdsAttributionData(from dictionary: [String: Any]) throws -> AppleAdsAttributionData {
+        func toDouble(_ value: Any?, key: String) throws -> Double {
+            if let number = value as? NSNumber {
+                return number.doubleValue
+            }
+
+            if let string = value as? String, let double = Double(string) {
+                return double
+            }
+
+            throw createError(description: "Missing or invalid value for key '\(key)'")
+        }
+
+        guard let attribution = dictionary["attribution"] as? Bool else {
+            throw createError(description: "Missing or invalid value for key 'attribution'")
+        }
+
+        let orgId = try toDouble(dictionary["orgId"], key: "orgId")
+        let campaignId = try toDouble(dictionary["campaignId"], key: "campaignId")
+        guard let conversionType = dictionary["conversionType"] as? String else {
+            throw createError(description: "Missing or invalid value for key 'conversionType'")
+        }
+
+        let clickDate = dictionary["clickDate"] as? String
+        let adGroupId = try toDouble(dictionary["adGroupId"], key: "adGroupId")
+        guard let countryOrRegion = dictionary["countryOrRegion"] as? String else {
+            throw createError(description: "Missing or invalid value for key 'countryOrRegion'")
+        }
+
+        let keywordId = try toDouble(dictionary["keywordId"], key: "keywordId")
+        let adId = try toDouble(dictionary["adId"], key: "adId")
+
+        return AppleAdsAttributionData(
+            attribution: attribution,
+            orgId: orgId,
+            campaignId: campaignId,
+            conversionType: conversionType,
+            clickDate: clickDate,
+            adGroupId: adGroupId,
+            countryOrRegion: countryOrRegion,
+            keywordId: keywordId,
+            adId: adId
+        )
     }
 
     // MARK: - API Request
@@ -152,13 +197,32 @@ class HybridNitroAppleAds: HybridNitroAppleAdsSpec {
     }
 
     // MARK: - Public API
-    func getAdServicesAttributionData(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
-        HybridNitroAppleAds.getAdServicesAttributionDataWithCompletionHandler { attributionData, error in
+    func getAdServicesAttributionData() throws -> Promise<AdServicesAttributionDataResponse> {
+        let promise = Promise<AdServicesAttributionDataResponse>()
+
+        HybridNitroAppleAdAttribution.getAdServicesAttributionDataWithCompletionHandler { attributionData, error in
             if let attributionData = attributionData {
-                resolve(attributionData)
+                do {
+                    let parsedData = try HybridNitroAppleAdAttribution.parseAppleAdsAttributionData(from: attributionData)
+                    let response = AdServicesAttributionDataResponse(
+                        data: parsedData,
+                        error: RuntimeError.error(withMessage: "")
+                    )
+                    promise.resolve(withResult: response)
+                } catch let parseError {
+                    promise.reject(withError: parseError)
+                }
+            } else if let error = error {
+                promise.reject(withError: error)
             } else {
-                HybridNitroAppleAds.rejectPromiseWithNSError(reject, error: error)
+                promise.reject(
+                    withError: HybridNitroAppleAdAttribution.createError(
+                        description: "Failed to get attribution data due to an unknown error"
+                    )
+                )
             }
         }
+
+        return promise
     }
 }
