@@ -15,11 +15,12 @@ Pod::Spec.new do |s|
 
   s.source_files = [
     # Implementation (Swift)
-    "ios/**/*.{swift}",
+    "ios/**/*.{h,m,mm,swift}",
     # Autolinking/Registration (Objective-C++)
     "ios/**/*.{m,mm}",
     # Implementation (C++ objects)
     "cpp/**/*.{hpp,cpp}",
+    "nitrogen/generated/**/*.{h,m,mm,swift,cpp}"
   ]
 
   s.pod_target_xcconfig = {
