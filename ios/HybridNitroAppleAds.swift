@@ -4,7 +4,7 @@ import AdServices
 import NitroModules
 
 @objc(HybridNitroAppleAdAttribution)
-class HybridNitroAppleAdAttribution: NSObject, HybridNitroAppleAdAttributionSpec {
+class HybridNitroAppleAdAttribution: HybridNitroAppleAdAttributionSpec_base, HybridNitroAppleAdAttributionSpec_protocol {
     // MARK: - Constants
     static let errorDomain = "RNAAAErrorDomain"
     static let maxRetries = 3
