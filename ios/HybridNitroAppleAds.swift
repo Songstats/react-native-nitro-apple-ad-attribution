@@ -66,9 +66,7 @@ class HybridNitroAppleAds: HybridNitroAppleAdsSpec {
 
         if #available(iOS 14.3, *) {
             do {
-                guard let attributionToken = try AAAttribution.attributionToken() else {
-                    return (nil, createError(description: "Error getting token, attributionToken is nil"))
-                }
+                let attributionToken = try AAAttribution.attributionToken()
                 return (attributionToken, nil)
             } catch {
                 return (nil, error)
