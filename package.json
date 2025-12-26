@@ -1,6 +1,6 @@
 {
   "name": "react-native-nitro-apple-ad-attribution",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Nitro module for Apple AdServices Attribution API",
   "main": "lib/index",
   "module": "lib/index",
