@@ -18,7 +18,7 @@ public protocol HybridNitroAppleAdAttributionSpec_protocol: HybridObject {
 }
 
 /// See ``HybridNitroAppleAdAttributionSpec``
-public class HybridNitroAppleAdAttributionSpec_base {
+public class HybridNitroAppleAdAttributionSpec_base: NSObject {
   private weak var cxxWrapper: HybridNitroAppleAdAttributionSpec_cxx? = nil
   public func getCxxWrapper() -> HybridNitroAppleAdAttributionSpec_cxx {
   #if DEBUG
